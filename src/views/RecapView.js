@@ -15,15 +15,23 @@ export function RecapView(answers) {
   title.textContent = 'Récapitulatif';
   el.appendChild(title);
 
+  // Score
+  const score = answers.filter((a, i) => a === pages[i]?.correct).length;
+  const scoreEl = document.createElement('p');
+  scoreEl.className = 'recap-score';
+  scoreEl.textContent = `${score} / ${pages.length} bonnes réponses`;
+  el.appendChild(scoreEl);
+
   const list = document.createElement('div');
   list.className = 'recap-list';
 
   for (let i = 0; i < pages.length; i++) {
     const page = pages[i];
     const answer = answers[i] ?? '—';
+    const isCorrect = answer === page.correct;
 
     const item = document.createElement('div');
-    item.className = 'recap-item';
+    item.className = `recap-item ${isCorrect ? 'correct' : 'wrong'}`;
 
     // Miniatures
     const thumbs = document.createElement('div');
@@ -39,11 +47,23 @@ export function RecapView(answers) {
     }
     item.appendChild(thumbs);
 
-    // Réponse
-    const answerEl = document.createElement('p');
-    answerEl.className = 'recap-answer';
-    answerEl.textContent = answer;
-    item.appendChild(answerEl);
+    // Réponses
+    const answersEl = document.createElement('div');
+    answersEl.className = 'recap-answers';
+
+    const givenEl = document.createElement('p');
+    givenEl.className = 'recap-given';
+    givenEl.textContent = answer;
+    answersEl.appendChild(givenEl);
+
+    if (!isCorrect) {
+      const correctEl = document.createElement('p');
+      correctEl.className = 'recap-correct';
+      correctEl.textContent = `✓ ${page.correct}`;
+      answersEl.appendChild(correctEl);
+    }
+
+    item.appendChild(answersEl);
 
     list.appendChild(item);
   }
